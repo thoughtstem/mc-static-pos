@@ -1,6 +1,7 @@
 #lang at-exp racket 
 
 (provide city-page
+	 city-page-dynamic
          summer-camp-pricing-at
          donate-card
          define/provide-course
@@ -11,7 +12,9 @@
          (rename-out (make-camp camp))
          generate-random-sku
          generate-random-product-id
-         )
+
+	 courses->course-registration
+	 pos)
 
 (require website/bootstrap
          net/uri-codec
@@ -81,6 +84,107 @@
                  "Camp duplicates found: " duplicates "\n"
                  "===== SITE BUILD DID NOT FINISH ===="))
       (displayln @~a{ @(~a #:width 20 (string-upcase city-name)): CAMP SKUS CHECKED})))
+
+
+(define (city-page-dynamic
+         #:city-name [city-name ""]
+         #:banner-url [img-url ""]
+         #:alt-tag    [alt-tag ""]
+	 dynamic-content)
+  (define jpg-url img-url)
+  (define webp-url (string-replace jpg-url "jpg" "webp"))
+  
+  (normal-content-wide #:head (list (title (string-append city-name " | Coding Classes and Camps for K-12 | MetaCoders"))
+                                    (meta name: "description" content: (string-append "Learn more about coding classes and camps for kids in " city-name ". MetaCoders doesn’t just teach kids how to code, but how to learn new programming languages!"))
+                                    (link 'rel: "preconnect" href:"https://q.stripe.com")
+                                    (link 'rel: "preconnect" href:"https://m.stripe.com")
+                                    (script src:"https://js.stripe.com/v3")
+                                    (common-critical-css))
+                       #:defer-css #t
+   (section id: "city-banner" class: "jumbotron d-flex align-items-center mb-0 text-center"
+            style: (properties
+                    background-image: (string-append "url(" webp-url ")") ;pass in webp and fallback to jpg
+                    background-size: "cover"
+                    background-position: "center"
+                    height: "60%"
+                    position: "relative")
+            role: "img"
+            alt: alt-tag
+            @style/inline[type: "text/css"]{
+		 .no-webp #city-banner{
+		  background-image: url('@jpg-url') !important;
+		 }
+		 .webp #city-banner{
+		  background-image: url('@webp-url') !important;
+		 }
+		}
+    (div style: (properties background-color: "rgba(0,0,0,0.6)"
+                            width: "100%"
+                            position: "absolute"
+                            top: 0
+                            left: 0
+                            bottom: 0
+                            right: 0
+                            float: "left"))
+    (container
+      (div style: (properties
+                  display: "inline-block"
+                  padding: 15
+                  color: "white"
+                  position: "relative")
+        (h1 (string-append "Coding Classes & Camps in " city-name)))))
+
+   dynamic-content
+
+
+   (have-questions-section)
+   ))
+
+
+(define (pos city-name
+         #:school-year-courses [school-year-courses '()]
+         #:summer-camps [summer-camps '()]
+         #:camp-pricing [camp-pricing (summer-camp-pricing-at #:location "TBA"
+                                                              #:am-camp-time "9am - 1pm"
+                                                              #:pm-camp-time "1pm - 4pm"
+                                                              #:full-day-time "9am - 4pm"
+                                                              #:am-price "TBA"
+                                                              #:pm-price "TBA"
+                                                              #:full-day-price "TBA")]
+         #:camp-lunch-info [camp-lunch-info "All-you-can-eat lunch at the campus dining hall"])
+
+  (list
+
+   (if (and (empty? school-year-courses)
+            (empty? summer-camps))
+       '()
+       (city-page-links-section))
+
+   (city-page-fold-section)
+   
+   (cond [(and (empty? school-year-courses)
+               (empty? summer-camps))  (jumbotron class: "mb-0 pt-5 pb-5 text-center"
+                                                  (container (h2 "Coming Soon!")
+                                                             (p "Click " (a href: (~a "https://docs.google.com/forms/d/e/1FAIpQLSfS5L8lP3vLUYhMi7lB5l6ikv4_ZOhejPVf8yjk9uuSiolRIA/viewform?usp=pp_url&entry.162480533="
+                                                                                      (string-replace city-name " " "+"))
+                                                                            "here")
+                                                                " to join the waitlist for MetaCoders classes and camps in " city-name ".")))]
+         [(empty? school-year-courses) (list (jumbotron  id: "school-year-classes"
+                                                         class: "mb-0 pt-6 pb-6 text-center"
+                                                         (container
+                                                          (h2 "Register for School-Year Classes")
+                                                          (p "Coming Soon!")))
+                                             (camps->camp-registration city-name summer-camps camp-pricing camp-lunch-info))]
+         [(empty? summer-camps) (list (courses->course-registration city-name school-year-courses)
+                                      (jumbotron  id: "summer-camps"
+                                                  class: "mb-0 pt-6 pb-6 text-center bg-white"
+                                                  (container
+                                                   (h2 "Register for Summer Camps")
+                                                   (p "Coming Soon!"))))]
+         [else (list (courses->course-registration city-name school-year-courses)
+                     (camps->camp-registration city-name summer-camps camp-pricing camp-lunch-info))
+          ])
+  ))
 
 (define (city-page
          #:city-name [city-name ""]
@@ -319,7 +423,7 @@
                               'onclick: (~a "updateStudents" sku "(event);")
                                (i class: "fas fa-plus fa-xs")))
 @script/inline{
- var updateStudents@sku = function(evt) {
+ window.updateStudents@sku = function(evt) {
   function formatPrice(price){
    if (Number.isInteger(price)){
     return "$" + price;
@@ -371,7 +475,7 @@
                               'onclick: (~a "modalUpdateStudents" sku "(event);")
                                (i class: "fas fa-plus fa-xs")))
 @script/inline{
- var modalUpdateStudents@sku = function(evt) {
+ window.modalUpdateStudents@sku = function(evt) {
   function formatPrice(price){
    if (Number.isInteger(price)){
     return "$" + price;
@@ -617,9 +721,7 @@
                    (apply row (map (curry div class: "d-flex col-lg-6 col-md-8 col-xs-12 my-3 mx-auto")
                                course-cards)))
                (p "By enrolling in any of these sessions, you agree to the " (link-to terms-and-conditions-path
-                                                                                      "terms and conditions") ".")
-               )
-              ))
+                                                                                      "terms and conditions") "."))))
 
 (define (summer-camps-links-section #:k-2?  k-2?
                                     #:3-5?  3-5?
