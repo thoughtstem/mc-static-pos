@@ -1152,7 +1152,7 @@ function setMonthlyDonate@amount() {
   (define topics-list (remove-duplicates (map camp-topic camps)))
   
   (define (topic->row topic)
-    (define topic-camps (filter (λ(c) (eq? (camp-topic c) topic)) sorted-camps))
+    (define topic-camps (filter (lambda(c) (string=? (camp-topic c) topic)) sorted-camps))
     ;Todo: order camps by date and pad missing weeks
     
     (define grade-range (camp-grade-range (first topic-camps)))
