@@ -601,7 +601,13 @@
                                           style: (properties border-radius: "0 0 0.18rem 0"
                                                              white-space: "normal")
                                           "Full (Click to Join Waitlist)"
-                                          )]))
+                                          )]
+        [(eq? (course-status course) 'registration-closed) (a href: "#"
+                                                            class: "btn btn-danger col-sm-6"
+                                                            style: (properties border-radius: "0 0 0.18rem 0"
+                                                                               white-space: "normal")
+                                                            "Closed"
+                                                            )]))
 
 (define (course->modal-enroll-or-full-button city course)
   (define key KEY)
