@@ -14,7 +14,9 @@
          generate-random-product-id
 
 	 courses->course-registration
-	 pos)
+	 pos
+         course->datetimes
+         )
 
 (require website/bootstrap
          net/uri-codec
@@ -710,7 +712,8 @@
   )
 
 (define (courses->course-registration city courses)
-  (define course-cards (map (curry course->course-card city) courses))
+  (define sorted-courses (sort courses datetime<? #:key (compose first course->datetimes)))
+  (define course-cards (map (curry course->course-card city) sorted-courses))
   (jumbotron  id: "school-year-classes"
               class: "mb-0 pt-6 pb-6 text-center"
               (container
@@ -821,6 +824,7 @@
 
 (define (camps->camp-registration city camps camp-pricing lunch-info)
   (define location-name (camp-location (first camps)))
+  (define sorted-camps (sort camps string<? #:key camp-topic)) ;Alphabetical sorting by topic
   
   (define (k-2-camp? c)
     (string-contains? (camp-grade-range c) "K - 2nd"))
@@ -829,9 +833,9 @@
   (define (7-10-camp? c)
     (string-contains? (camp-grade-range c) "7th - 10th"))
   
-  (define k-2-camps (filter k-2-camp? camps))
-  (define 3-6-camps (filter 3-6-camp? camps))
-  (define 7-10-camps (filter 7-10-camp? camps))
+  (define k-2-camps (filter k-2-camp? sorted-camps))
+  (define 3-6-camps (filter 3-6-camp? sorted-camps))
+  (define 7-10-camps (filter 7-10-camp? sorted-camps))
   
   (list (jumbotron  id: "summer-camps"
               class: "mb-0 pt-6 pb-6 text-center bg-white"
@@ -1510,6 +1514,11 @@ function setMonthlyDonate@amount() {
                    class: "btn btn-warning m-0 col-sm-6 px-2"
                    style: (properties border-radius: "0 0 0.20rem 0")
                    "Download Form")))))))
+
+(define (course->datetimes course)
+  (define start-time (course-start-time course))
+  (map (λ (date)
+         (parse-datetime (~a date " " start-time) "M/d/yyyy h:mma")) (course-meeting-dates course)))
 
 ; ==== UUID SKU GENERATOR ====
 (define (uuid->base64 str)
