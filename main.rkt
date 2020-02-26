@@ -1148,12 +1148,11 @@ function setMonthlyDonate@amount() {
                                           'data-toggle: "modal" 'data-target: (~a "#camp-full-modal-" (camp-sku camp))
                                           "Full (Click to Join Waitlist)"
                                           )]
-        [(eq? (camp-status camp) 'registration-closed) (div class: "btn btn-danger btn-sm"
-                                                            style: (properties border-radius: "0 0 0.18rem 0"
-                                                                               white-space: "normal")
-                                                            'data-toggle: "modal" 'data-target: (~a "#camp-closed-modal-" (camp-sku camp))
-                                                            "Closed (Click for Info)"
-                                                            )]
+        [(eq? (camp-status camp) 'registration-closed) (a href: "#"
+                                                          class: "btn btn-danger btn-sm"
+                                                          'data-toggle: "modal" 'data-target: (~a "#camp-closed-modal-" (camp-sku camp))
+                                                          "Closed (Click for Info)"
+                                                          )]
         ))
 ; Get earliest meeting-date and the latest meeting-date
 (define (camps->camp-calendar city camps lunch-info)
