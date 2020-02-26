@@ -280,7 +280,7 @@
 
 (define (~p price)
   (if (integer? price)
-      (~a "$" price)
+      (~a "$" (~r price #:precision 0))
       (~a "$" (~r price #:precision '(= 2)))))
 
 (define (course-buy-button price discount sku key url-suffix #:suffix [suffix ""])
