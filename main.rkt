@@ -602,12 +602,12 @@
                                                              white-space: "normal")
                                           "Full (Click to Join Waitlist)"
                                           )]
-        [(eq? (course-status course) 'registration-closed) (a href: "#"
-                                                            class: "btn btn-danger col-sm-6"
-                                                            style: (properties border-radius: "0 0 0.18rem 0"
-                                                                               white-space: "normal")
-                                                            "Closed"
-                                                            )]))
+        [(eq? (course-status course) 'registration-closed) (div class: "btn btn-danger col-sm-6"
+                                                                style: (properties border-radius: "0 0 0.18rem 0"
+                                                                                   white-space: "normal")
+                                                                "Closed"
+                                                                )]
+        ))
 
 (define (course->modal-enroll-or-full-button city course)
   (define key KEY)
@@ -639,7 +639,13 @@
                                           style: (properties border-radius: "0 0 0.18rem 0"
                                                              white-space: "normal")
                                           "Full (Click to Join Waitlist)"
-                                          )]))
+                                          )]
+        [(eq? (course-status course) 'registration-closed) (div class: "btn btn-danger col-sm-6"
+                                                                style: (properties border-radius: "0 0 0.18rem 0"
+                                                                                   white-space: "normal")
+                                                                "Closed"
+                                                                )]
+        ))
 
 (define (course->course-card city c)
   (define key KEY)
@@ -1141,7 +1147,13 @@ function setMonthlyDonate@amount() {
                                           class: "btn btn-danger btn-sm"
                                           'data-toggle: "modal" 'data-target: (~a "#camp-full-modal-" (camp-sku camp))
                                           "Full (Click to Join Waitlist)"
-                                          )]))
+                                          )]
+        [(eq? (camp-status camp) 'registration-closed) (div class: "btn btn-danger btn-sm"
+                                                            style: (properties border-radius: "0 0 0.18rem 0"
+                                                                               white-space: "normal")
+                                                            "Closed"
+                                                            )]
+        ))
 ; Get earliest meeting-date and the latest meeting-date
 (define (camps->camp-calendar city camps lunch-info)
   (define sorted-camps
