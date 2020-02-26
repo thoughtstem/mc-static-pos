@@ -1151,7 +1151,8 @@ function setMonthlyDonate@amount() {
         [(eq? (camp-status camp) 'registration-closed) (div class: "btn btn-danger btn-sm"
                                                             style: (properties border-radius: "0 0 0.18rem 0"
                                                                                white-space: "normal")
-                                                            "Closed"
+                                                            'data-toggle: "modal" 'data-target: (~a "#camp-closed-modal-" (camp-sku camp))
+                                                            "Closed (Click for Info)"
                                                             )]
         ))
 ; Get earliest meeting-date and the latest meeting-date
@@ -1190,9 +1191,9 @@ function setMonthlyDonate@amount() {
                        (~p price))
                     " " (~p (- price discount)))
               (~p price))
-          (if (eq? (camp-status camp) 'full)
-              (camp->camp-full-modal camp lunch-info)
-              (camp->camp-enroll-modal city camp lunch-info))))
+          (cond [(eq? (camp-status camp) 'full)                (camp->camp-full-modal camp lunch-info)]
+                [(eq? (camp-status camp) 'registration-closed) (camp->camp-closed-modal camp lunch-info)]
+                [else (camp->camp-enroll-modal city camp lunch-info)])))
 
     (define (camp-or-no-camp iso-week)
       (define camp
@@ -1471,6 +1472,84 @@ function setMonthlyDonate@amount() {
                                   'data-dismiss: "modal"
                    "Close")
                 camp-full-button))))))
+
+(define (camp->camp-closed-modal camp lunch-info)
+  (define location  (camp-location camp))
+  (define topic     (camp-topic camp))
+  (define sku       (camp-sku camp))
+  (define grade-range (camp-grade-range camp))
+  (define video-path (camp-video-path camp))
+  (define check-in-time (camp-check-in-time camp))
+  (define camp-time (camp-camp-time camp))
+  (define lunch-time (camp-lunch-time camp))
+  (define pickup-time (camp-pickup-time camp))
+  (define meeting-dates (camp-meeting-dates camp))
+  (define price (camp-price camp))
+  (define discount (camp-discount camp))
+  (define description (camp-description camp))
+  (define address (camp-address camp))
+  (define address-link (camp-address-link camp))
+  (define modal-id (~a "camp-full-modal-" sku))
+  
+  (define camp-closed-button (div class: "btn btn-danger m-0 col-sm-6 px-2"
+                                  style: (properties border-radius: "0 0 0.20rem 0")
+                                  (~a "Registration Closed")
+                                  ))
+  (define mp4-url video-path)
+  (define webm-url (mp4-path->webm-path mp4-url))
+  
+  (modal id: modal-id 'tabindex: "-1" role: "dialog"
+     (modal-dialog class: "modal-lg modal-dialog-centered"
+        (modal-content
+          (modal-header class: "bg-primary p-2 pl-3 pr-3 text-white h5 m-0" (~a location " - " topic " (" grade-range ")"))
+          (modal-body
+           (row class: "text-left"
+                (col-lg-6 class: "col-xs-12"
+                 #;(img src: video-path
+                      class: "img-fluid rounded border border-secondary")
+                 (video 'autoplay: "" 'loop: "" 'muted: "" 'playsinline: ""
+                        class: "img-fluid rounded border border-secondary"
+                        (source src: (prefix/pathify webm-url) type: "video/webm")
+                        (source src: (prefix/pathify mp4-url) type: "video/mp4"))
+                 (h5 class: "mt-4" "Camp Schedule")
+                 (table class: "table table-striped table-bordered"
+                   (tr (td (b "Check-in")) (td check-in-time))
+                   (tr (td (b "Camp Activities")) (td camp-time))
+                   (tr (td (b "Lunchtime")) (td lunch-time))
+                   (tr (td (b "Pick-up")) (td pickup-time))
+                   (tr (td (b "Grades")) (td grade-range))
+                   (tr (td (b "Start Date")) (td (first meeting-dates)))
+                   (tr (td (b "Location")) (td location (br) (a target:"_blank" href: address-link address)))
+                   (tr (td (b "Price")) (td (if (> discount 0)
+                                                 (list (s class: "text-danger"
+                                                          (~p price))
+                                                       " " (~p (- price discount)) "/student")
+                                                 (~a (~p price) "/student"))))
+                   (tr (td (b "Dates")) (td (print-dates meeting-dates))))
+                 )
+                (col-lg-6 class: "col-xs-12"
+                 (h5 "Camp Description")
+                 (p (html/inline description))
+                 (h5 "What's Included?")
+                 (ul (li "6:1 student-to-instructor ratio")
+                     (li "A week full of coding fun!")
+                     (if (string=? lunch-time "")
+                         '()
+                         (li lunch-info))
+                     (li "Outdoor time, team-building, & teamerwork excercises"))
+                 (h5 "How to Purchase")
+                 (p "Unfortunately, registraion for this camp is closed.")
+                 (br)
+                 (p "By enrolling in any of these sessions, you agree to the " (link-to terms-and-conditions-path
+                                                                                      "terms and conditions") ".")
+                 )))
+          (modal-footer class: "text-center p-0"
+           (div class: "btn-group w-100 m-0"
+                (button-secondary class: "m-0 col-sm-6 px-2"
+                                  style: (properties border-radius: "0 0 0 0.20rem")
+                                  'data-dismiss: "modal"
+                   "Close")
+                camp-closed-button))))))
 
 (define (camp->topic-info-modal camp lunch-info)
   (define location  (camp-location camp))
