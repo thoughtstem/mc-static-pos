@@ -1488,7 +1488,7 @@ function setMonthlyDonate@amount() {
   (define description (camp-description camp))
   (define address (camp-address camp))
   (define address-link (camp-address-link camp))
-  (define modal-id (~a "camp-full-modal-" sku))
+  (define modal-id (~a "camp-closed-modal-" sku))
   
   (define camp-closed-button (div class: "btn btn-danger m-0 col-sm-6 px-2"
                                   style: (properties border-radius: "0 0 0.20rem 0")
