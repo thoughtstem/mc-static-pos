@@ -16,6 +16,7 @@
 	 courses->course-registration
 	 pos
          course->datetimes
+         (rename-out (KEY FRONT-END-STRIPE-KEY))
          )
 
 (require website/bootstrap
@@ -28,7 +29,7 @@
          metacoders-dot-org-lib/imgs
          metacoders-dot-org-lib/paths)
 
-(define KEY "pk_live_Kd7tDKVnPMvyCyk5oAuSkbju00pa0xJPPL"
+(define KEY (make-parameter "pk_live_Kd7tDKVnPMvyCyk5oAuSkbju00pa0xJPPL")
             ;"pk_test_Jd6aRCVssUu8YfSvltaT3tvU00je9fQbkA"
   )
 
@@ -572,7 +573,7 @@
                       "Student Name: ________\n\n"))))
 
 (define (course->enroll-or-full-button city course)
-  (define key KEY)
+  (define key (KEY))
   
   (define price (course-price course))
   (define discount (course-discount course))
@@ -610,7 +611,7 @@
         ))
 
 (define (course->modal-enroll-or-full-button city course)
-  (define key KEY)
+  (define key (KEY))
   
   (define price (course-price course))
   (define discount (course-discount course))
@@ -648,7 +649,7 @@
         ))
 
 (define (course->course-card city c)
-  (define key KEY)
+  (define key (KEY))
 
   (define topic (course-topic c))
   (define sku (course-sku c))
@@ -911,7 +912,7 @@ function setDonate@amount() {
                       (rest items)))))
 
 (define (donate-button items #:mode [mode 'give-once])
-  (define key KEY)
+  (define key (KEY))
   (define button-id (if (eq? mode 'monthly)
                         "monthly-donate-button"
                         "donate-button"))
@@ -1311,7 +1312,7 @@ function setMonthlyDonate@amount() {
                          "&description="       (form-urlencoded-encode description)
                          ))
   
-  (define modal-buy-button (camp-modal-buy-button price discount sku KEY url-suffix))
+  (define modal-buy-button (camp-modal-buy-button price discount sku (KEY) url-suffix))
 
   (define mp4-url video-path)
   (define webm-url (mp4-path->webm-path mp4-url))
