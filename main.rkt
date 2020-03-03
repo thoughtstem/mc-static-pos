@@ -846,7 +846,7 @@
 (define (camps->camp-registration city camps camp-pricing lunch-info)
   (define location-name (camp-location (first camps)))
   (define sorted-camps (sort camps string<? #:key camp-topic)) ;Alphabetical sorting by topic
-  
+
   (define (k-2-camp? c)
     (string-contains? (camp-grade-range c) "K - 2nd"))
   (define (3-6-camp? c)
@@ -1076,22 +1076,47 @@ function setMonthlyDonate@amount() {
               meeting-dates
               status))
 
-(define (make-camp #:topic         [topic ""]
-                   #:sku           [sku   ""]
-                   #:video-path     [video-path ""]
-                   #:description   [description ""]
-                   #:grade-range   [grade-range ""]
-                   #:location      [location ""]
-                   #:address       [address ""]
-                   #:address-link  [address-link ""]
-                   #:price         [price 300]
-                   #:discount      [discount 0]
-                   #:check-in-time [check-in-time ""]
-                   #:camp-time     [camp-time ""]
-                   #:lunch-time    [lunch-time  ""]
-                   #:pickup-time   [pickup-time ""]
-                   #:meeting-dates [meeting-dates '()]
-                   #:status        [status 'open])
+
+(define (valid-grade-range? gr)
+  (or (string=? gr "K - 2nd")
+      (string=? gr "3rd - 6th")
+      (string=? gr "7th - 10th")))
+
+(define/contract (make-camp #:topic         [topic ""]
+                            #:sku           [sku   ""]
+                            #:video-path    [video-path battlearena-mp4-path]
+                            #:description   [description ""]
+                            #:grade-range   [grade-range "3rd - 6th"]
+                            #:location      [location ""]
+                            #:address       [address ""]
+                            #:address-link  [address-link ""]
+                            #:price         [price 300]
+                            #:discount      [discount 0]
+                            #:check-in-time [check-in-time ""]
+                            #:camp-time     [camp-time ""]
+                            #:lunch-time    [lunch-time  ""]
+                            #:pickup-time   [pickup-time ""]
+                            #:meeting-dates [meeting-dates '()]
+                            #:status        [status 'open])
+  (->i ()
+       (#:topic         [topic string?]
+        #:sku           [sku   string?]
+        #:video-path    [video-path (listof string?)]
+        #:description   [description string?]
+        #:grade-range   [grade-range valid-grade-range?]
+        #:location      [location string?]
+        #:address       [address string?]
+        #:address-link  [address-link string?]
+        #:price         [price number?]
+        #:discount      [discount number?]
+        #:check-in-time [check-in-time string?]
+        #:camp-time     [camp-time string?]
+        #:lunch-time    [lunch-time  string?]
+        #:pickup-time   [pickup-time string?]
+        #:meeting-dates [meeting-dates (or/c empty? (listof string?))]
+        #:status        [status symbol?]
+        )
+       [result camp?])
   (camp topic sku video-path description grade-range location address address-link price discount check-in-time camp-time lunch-time pickup-time meeting-dates status))
 
 (define (course-modal #:id modal-id
