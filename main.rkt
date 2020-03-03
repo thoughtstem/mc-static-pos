@@ -725,7 +725,14 @@
   )
 
 (define (courses->course-registration city courses)
-  (define sorted-courses (sort courses datetime<? #:key (compose first course->datetimes)))
+  
+  (define (registration-closed? course)
+    (eq? (course-status course) 'registration-closed))
+  
+  (define ordered-courses (sort courses datetime<? #:key (compose first course->datetimes)))
+  (define sorted-courses (append (filter-not registration-closed? ordered-courses)
+                                 (filter registration-closed? ordered-courses)))
+  
   (define course-cards (map (curry course->course-card city) sorted-courses))
   (jumbotron  id: "school-year-classes"
               class: "mb-0 pt-6 pb-6 text-center"
