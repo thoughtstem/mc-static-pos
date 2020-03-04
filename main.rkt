@@ -1078,9 +1078,9 @@ function setMonthlyDonate@amount() {
 
 
 (define (valid-grade-range? gr)
-  (or (string=? gr "K - 2nd")
-      (string=? gr "3rd - 6th")
-      (string=? gr "7th - 10th")))
+  (or (string-contains? gr "K - 2nd")
+      (string-contains? gr "3rd - 6th")
+      (string-contains? gr "7th - 10th")))
 
 (define/contract (make-camp #:topic         [topic ""]
                             #:sku           [sku   ""]
