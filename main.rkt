@@ -154,7 +154,12 @@
                                                               #:am-price "TBA"
                                                               #:pm-price "TBA"
                                                               #:full-day-price "TBA")]
-         #:camp-lunch-info [camp-lunch-info "All-you-can-eat lunch at the campus dining hall"])
+         #:camp-lunch-info [camp-lunch-info "All-you-can-eat lunch at the campus dining hall"]
+         #:discounts-and-faq [discounts-and-faq (discounts-and-faq-section
+                                                 #:pick-up-drop-off "Directions will be emailed to parents a few days before camp, or check back here in a few weeks for a map."
+                                                 #:campus-parking "Parking on campus Monday-Friday requires a fee. However, our drop-off and pick-up location does not require you to park your car. We'll meet you on the curbside so you can easily drop-off or pick-up your student."
+                                                 #:additional-paperwork "You only need to fill out additional paperwork if your student has any food allergies. Please include allergies in your medical notes information at registration. We will follow up with you over email if there is additional paperwork to fill out."
+                                                 #:dining-options (list "The dining hall at this location can generally accommodate any food allergy with enough advanced notice. Please " (a href: "mailto:contact@metacoders.org" "email") " us if you are concerned about your child's ability to find appropriate food options, so that we can check with the dining hall staff."))])
 
   (list
 
@@ -177,7 +182,7 @@
                                                          (container
                                                           (h2 "Register for School-Year Classes")
                                                           (p "Coming Soon!")))
-                                             (camps->camp-registration city-name summer-camps camp-pricing camp-lunch-info))]
+                                             (camps->camp-registration city-name summer-camps camp-pricing camp-lunch-info discounts-and-faq))]
          [(empty? summer-camps) (list (courses->course-registration city-name school-year-courses)
                                       (jumbotron  id: "summer-camps"
                                                   class: "mb-0 pt-6 pb-6 text-center bg-white"
@@ -185,7 +190,7 @@
                                                    (h2 "Register for Summer Camps")
                                                    (p "Coming Soon!"))))]
          [else (list (courses->course-registration city-name school-year-courses)
-                     (camps->camp-registration city-name summer-camps camp-pricing camp-lunch-info))
+                     (camps->camp-registration city-name summer-camps camp-pricing camp-lunch-info discounts-and-faq))
           ])
   ))
 
@@ -834,7 +839,37 @@
                                                                               (~a ", includes " (string-downcase lunch-info))))
              (li "Want to buy more than 1 week of camp? We'll take an extra 10% off your entire order")))))
 
+(define (discounts-and-faq-section
+         #:pick-up-drop-off pick-up-drop-off
+         #:campus-parking campus-parking
+         #:additional-paperwork additional-paperwork
+         #:dining-options dining-options)
+  (div class: "text-center"
+       (h2 class: "mb-4" "Discounts")
+       (h4 class: "text-left" "Early Bird Discount - Ends April 1st")
+       (p class: "text-left" "Sign up before April 1st and get an extra 10% off of your summer camp purchase automatically at checkout! Register soon to take advantage of the best possible pricing for our camps!")
+       (hr)
+       (h2 class: "mb-4" "Frequently Asked Questions")
+       (ol class: "text-left"
+           (li (strong "Is there a deadline to register? ") "The deadline for the morning camp on any given week is noon on the Wednesday before camp starts. However, you can register for the afternoon camp at this location as late as 6pm on the Sunday before camp starts.")
+           (li (strong "Where do I drop-off & pick-up my student(s)? ") pick-up-drop-off)
+           (li (strong "Do you have extended daycare options? ") "We do not this year, however if this is something you are interested in for future summer camps, please " (a href: "mailto:contact@metacoders.org" "email") " us to let us know!")
+           (li (strong "Can I park on campus? ") campus-parking)
+           (li (strong "Do I need to sign any additional paperwork to participate in camps? ") additional-paperwork)
+           (li (strong "Should I consider the grade my student is going into next year or the last grade they completed when registering for summer camp? ") "We generally recommend parents consider the grade their student is going into next year when registering for a summer camp. However, we ultimately leave the choice up to the students and the parents. Feel free to contact us by phone, " (strong (a href: "tel:858-869-9430" "(858)869-9430")) ", if you'd like to discuss those options.")
+           (li (strong "Are there any additional requirements for students going into Kindergarten next year? ") "We generally recommend parents not enroll a student in our summer camp if this will be the first classroom experience they've ever had. Students who have previously been enrolled in a TK program, however, tend to have a lot of fun at coding camp! We also recommend parents spend a little time with their students before camp going over the basics of using a mouse, but this is by no means a requirement!")
+           (li (strong "What if I need to pick-up my student early one day of camp? ") "Send us an " (a href: "mailto:contact@metacoders.org" "email") ", and we can facilitate an early pick-up with the instructor. Don’t forget to include your student’s name and the date and time you need to pick him/her up early.")
+           (li (strong "What if I'm late to pick up my student? ") "If you're running late, please give us a call at 858-375-4097 so we can tell our staff that you are on your way. Note: parents who are late to pick up their student will be charged a fee to cover overtime pay for instructors waiting with their students. This fee is $15 per 15 minutes.")
+           (li (strong "I have multiple children who I want to register for camp. Can I get a discount? ") "Yes! We offer a 10% discount for registering siblings! Please use the registration form " (a href: "https://metacoders.org/files/metacoders-summer-camp-registration-form.pdf" "here") " to purchase multiple camps at once so that we can get you a special discount.")
+           (li (strong "Do you have scholarships available? ") "At this time we do not, but we are always looking for corporate sponsors for scholarships! If you know of someone interested in making a summer camp scholarship donation, please " (a href: "mailto:contact@metacoders.org" "email") " us.")
+           (if dining-options
+               (li (strong "My student has food allergies. What kind of dining options are available? ") dining-options)
+               '())
+           (li (strong "What is your refund policy? ") "Learn about our refund policy " (a href: "https://metacoders.org/terms-and-conditions.html" "here") ".")
+           )
+       ))
 
+ 
 (define (have-questions-section)
   (jumbotron class: "mb-0 pt-5 pb-5 text-center"
              (container
@@ -843,7 +878,7 @@
                  (a href: "mailto:contact@metacoders.org" "contact@metacoders.org")
                  " or call " (strong "858-869-9430")))))
 
-(define (camps->camp-registration city camps camp-pricing lunch-info)
+(define (camps->camp-registration city camps camp-pricing lunch-info discounts-and-faq)
   (define location-name (camp-location (first camps)))
   (define sorted-camps (sort camps string<? #:key camp-topic)) ;Alphabetical sorting by topic
 
@@ -894,6 +929,8 @@
                ;(summer-camp-pricing-at location-name)
                (p "By enrolling in any of these sessions, you agree to the " (link-to terms-and-conditions-path
                                                                                       "terms and conditions") ".")
+               (hr)
+               discounts-and-faq
                ))
         ))
 
