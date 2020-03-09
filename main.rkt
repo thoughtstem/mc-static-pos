@@ -3,6 +3,7 @@
 (provide city-page
 	 city-page-dynamic
          summer-camp-pricing-at
+         discounts-and-faq-section
          donate-card
          define/provide-course
          define/provide-camp
