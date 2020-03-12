@@ -881,7 +881,7 @@
               (h2 "Have Questions?")
               (p "Email us at "
                  (a href: "mailto:contact@metacoders.org" "contact@metacoders.org")
-                 " or call " (strong "858-869-9430")))))
+                 " or call " (strong "858-375-4097")))))
 
 (define (camps->camp-registration city camps camp-pricing lunch-info discounts-and-faq)
   (define location-name (camp-location (first camps)))
