@@ -828,17 +828,24 @@
             (h2 class: "mb-4" "Summer Camp Pricing at " location-name)
             (strong "Purchasing 1 Half-Day Morning or Afternoon Camp? Purchase using the table above.")
             (ul
-             (li "Morning Only (" am-camp-time " ): $" am-price (if lunch-info
+             (if am-camp-time
+	       (li "Morning Only (" am-camp-time " ): $" am-price (if lunch-info
                                                                     (~a ", includes " (string-downcase lunch-info))
                                                                     ""))
-             (li "Afternoon Only (" pm-camp-time "): $" pm-price ""))
+	       '())
+             (if pm-camp-time 
+	       (li "Afternoon Only (" pm-camp-time "): $" pm-price "")
+	       '()))
             (strong "Purchasing More than 1 Half-Day Camp? Fill out the registration form "
                     (a href: (prefix/pathify camp-form-path)"here") ", and email it to "
                     (a href: "mailto:contact@metacoders.org" "contact@metacoders.org"))
             (ul
-             (li "Full Day, 1-week (" full-day-time "): $" full-day-price (if (string=? lunch-info "")
+             (if (and am-camp-time
+		      pm-camp-time)
+	       (li "Full Day, 1-week (" full-day-time "): $" full-day-price (if (string=? lunch-info "")
                                                                               ""
                                                                               (~a ", includes " (string-downcase lunch-info))))
+	       '())
              (li "Want to buy more than 1 week of camp? We'll take an extra 10% off your entire order")))))
 
 (define (discounts-and-faq-section
