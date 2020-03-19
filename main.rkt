@@ -786,7 +786,7 @@
 (define (summer-camps-info-section location-name lunch-info)
   (row class: "align-items-center" ;abstract to responsive-row-lg?
        (div class: "col-lg-6 col-xs-12 p-4 text-left"
-            (h5 class: "text-center" "What Makes MetaCoders Camps Different?")
+            (h5 class: "text-center" "What Makes a MetaCoders Camp Different?")
             (ul class: "pl-4"
                 (li (p (b "Affordable: ") (~a "We bring summer technology education to local students at a more affordable price. "
                                               "Additional discoutns are available for multiple registrations.")))
@@ -829,12 +829,12 @@
             (strong "Purchasing 1 Half-Day Morning or Afternoon Camp? Purchase using the table above.")
             (ul
              (if am-camp-time
-	       (li "Morning Only (" am-camp-time " ): $" am-price (if lunch-info
+	       (li "Morning Only (" am-camp-time " ): " am-price (if lunch-info
                                                                     (~a ", includes " (string-downcase lunch-info))
                                                                     ""))
 	       '())
              (if pm-camp-time 
-	       (li "Afternoon Only (" pm-camp-time "): $" pm-price "")
+	       (li "Afternoon Only (" pm-camp-time "): " pm-price "")
 	       '()))
             (strong "Purchasing More than 1 Half-Day Camp? Fill out the registration form "
                     (a href: (prefix/pathify camp-form-path)"here") ", and email it to "
@@ -842,7 +842,7 @@
             (ul
              (if (and am-camp-time
 		      pm-camp-time)
-	       (li "Full Day, 1-week (" full-day-time "): $" full-day-price (if (string=? lunch-info "")
+	       (li "Full Day, 1-week (" full-day-time "): " full-day-price (if (string=? lunch-info "")
                                                                               ""
                                                                               (~a ", includes " (string-downcase lunch-info))))
 	       '())
