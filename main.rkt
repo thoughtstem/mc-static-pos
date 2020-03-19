@@ -18,6 +18,7 @@
 	 pos
          course->datetimes
          (rename-out (KEY FRONT-END-STRIPE-KEY))
+	 ~p
          )
 
 (require website/bootstrap
