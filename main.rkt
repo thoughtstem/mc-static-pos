@@ -147,22 +147,11 @@
 
 
 (define (pos city-name
-         #:school-year-courses [school-year-courses '()]
-         #:summer-camps [summer-camps '()]
-         #:camp-pricing [camp-pricing (summer-camp-pricing-at #:location "TBA"
-                                                              #:am-camp-time "9am - 1pm"
-                                                              #:pm-camp-time "1pm - 4pm"
-                                                              #:full-day-time "9am - 4pm"
-                                                              #:am-price "TBA"
-                                                              #:pm-price "TBA"
-                                                              #:full-day-price "TBA")]
-         #:camp-lunch-info [camp-lunch-info "All-you-can-eat lunch at the campus dining hall"]
-         #:discounts-and-faq [discounts-and-faq (discounts-and-faq-section
-                                                 #:early-bird-discount? #t
-                                                 #:pick-up-drop-off "Directions will be emailed to parents a few days before camp, or check back here in a few weeks for a map."
-                                                 #:campus-parking "Parking on campus Monday-Friday requires a fee. However, our drop-off and pick-up location does not require you to park your car. We'll meet you on the curbside so you can easily drop-off or pick-up your student."
-                                                 #:additional-paperwork "You only need to fill out additional paperwork if your student has any food allergies. Please include allergies in your medical notes information at registration. We will follow up with you over email if there is additional paperwork to fill out."
-                                                 #:dining-options (list "The dining hall at this location can generally accommodate any food allergy with enough advanced notice. Please " (a href: "mailto:contact@metacoders.org" "email") " us if you are concerned about your child's ability to find appropriate food options, so that we can check with the dining hall staff."))])
+         #:school-year-courses school-year-courses
+         #:summer-camps summer-camps
+         #:camp-pricing camp-pricing
+         #:camp-lunch-info camp-lunch-info
+         #:discounts-and-faq discounts-and-faq)
 
   (list
 
@@ -855,7 +844,7 @@
          #:campus-parking campus-parking
          #:additional-paperwork additional-paperwork
          #:dining-options dining-options
-	 #:food-allergy food-alergy)
+	 #:food-allergy food-allergy)
   (div class: "text-center"
        (if early-bird-discount?
            (div (h2 class: "mb-4" "Discounts")
